@@ -7,7 +7,13 @@ font-family: 'Noto Serif KR', serif;
 /* ****** 공통사항 ****** */
 html, body {font-family: 'Noto Sans KR', sans-serif; line-height: 1;}
 .wrapper {max-width: 1200px; margin: auto;}
-.popper {display: flex; position: absolute; background-color: rgba(0,0,0,0.7); color: #f9f9f9; border-radius: 4px; text-align: center; align-items: center; padding-right: 6px; font-weight: lighter; font-size: 0.875em;}
+.popper {display: flex; position: absolute; background-color: rgba(0,0,0,0.7); color: #f9f9f9; border-radius: 4px; text-align: center; align-items: center; padding-right: 6px; font-weight: lighter; font-size: 0.875em; top: -50px; left: -40px;}
+.popper.lt {left: 0;}
+.popper.ct {left: -40px;}
+.popper.rt {left: -80px;}
+.popper.lt > .fa {left: 6px;}
+.popper.ct > .fa {left: calc(50% - 5px);}
+.popper.rt > .fa {right: 6px;}
 .popper .img-wrap {width: 40px;}
 .popper .name {margin-bottom: 2px;}
 .popper .fa {color: rgba(0,0,0,0.7); position: absolute; bottom: -10px; left: 50%; font-size: 1.25em;}

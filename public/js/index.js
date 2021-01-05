@@ -58,6 +58,7 @@ function onGetWeather(r) {
 
 function onGetCity(r) {
 	createMarker(r.cities);
+	// 변경할 사항은 위의 createMarker를 실행하지 않고 openweathermap 통신으로 날씨정보 받아오면 그 때 그 정보로 marker 만듦
 }
 
 
@@ -65,7 +66,7 @@ function onGetCity(r) {
 function createMarker(v) {
 	for(var i in v) {
 		var content = '';
-		content += '<div class="popper">';
+		content += '<div class="popper '+v[i].class+'">';
 		content += '<div class="img-wrap">';
 		content += '	<img src="http://openweathermap.org/img/wn/02d.png" class="mw-100">';
 		content += '</div>';
@@ -78,7 +79,7 @@ function createMarker(v) {
 		var position = new kakao.maps.LatLng(v[i].lat, v[i].lon)
 		var customOverlay = new kakao.maps.CustomOverlay({
 			position: position,
-			content: content,
+			content: content
 		});
 		customOverlay.setMap(map);
 	}
@@ -91,10 +92,12 @@ function getWeather(lat, lon) {
 }
 
 function mapInit() {
-	var mapContainer = document.getElementById('map'), // 지도를 표시할 div 
+	var mapContainer = document.getElementById('#map'), // 지도를 표시할 div 
 	mapOption = { 
-		center: new kakao.maps.LatLng(35.8, 127.8), // 지도의 중심좌표
-		level: 13 // 지도의 확대 레벨
+		center: new kakao.maps.LatLng(35.8, 127.7), // 지도의 중심좌표
+		level: 13, // 지도의 확대 레벨
+		draggable: false,
+		zoomable: false
 	};
 	
   // 지도를 표시할 div와  지도 옵션으로  지도를 생성합니다
