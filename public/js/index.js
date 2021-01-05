@@ -22,8 +22,11 @@ $('#bt').click(function(){
 
 // 7days: https://api.openweathermap.org/data/2.5/onecall?lat=38&lon=127&appid=488c40db3b8e389e1bcf4a0f9a83f8fa&units=metric&exclude=minutely,hourly
 
+//icon: http://openweathermap.org/img/wn/10d@2x.png
+
 
 /******** 전역설정 ********/
+var map;
 var weatherUrl = 'https://api.openweathermap.org/data/2.5/weather';
 var params = {
 	appid: '488c40db3b8e389e1bcf4a0f9a83f8fa',
@@ -33,6 +36,8 @@ var params = {
 
 /******** 이벤트 등록 ********/
 navigator.geolocation.getCurrentPosition(onGetPosition, onGetPositionError);
+mapInit();
+
 
 
 /******** 이벤트 콜백 ********/
@@ -51,14 +56,55 @@ function onGetWeather(r) {
 	updateBg(r.weather[0].icon);
 }
 
+function onGetCity(r) {
+	createMarker(r.cities);
+}
 
 
 /******** 사용자 함수  ********/
+function createMarker(v) {
+	for(var i in v) {
+		var content = '';
+		content += '<div class="popper">';
+		content += '<div class="img-wrap">';
+		content += '	<img src="http://openweathermap.org/img/wn/02d.png" class="mw-100">';
+		content += '</div>';
+		content += '<div class="cont-wrap">';
+		content += '	<div class="name">'+v[i].name+'</div>';
+		content += '	<div class="temp">-3.57도</div>';
+		content += '</div>';
+		content += '<i class="fa fa-caret-down"></i>';
+		content += '</div>';
+		var position = new kakao.maps.LatLng(v[i].lat, v[i].lon)
+		var customOverlay = new kakao.maps.CustomOverlay({
+			position: position,
+			content: content,
+		});
+		customOverlay.setMap(map);
+	}
+}
+
 function getWeather(lat, lon) {
 	params.lat = lat;  //params에 lat 집어넣음
 	params.lon = lon;
 	$.get(weatherUrl, params, onGetWeather);
 }
+
+function mapInit() {
+	var mapContainer = document.getElementById('map'), // 지도를 표시할 div 
+	mapOption = { 
+		center: new kakao.maps.LatLng(35.8, 127.8), // 지도의 중심좌표
+		level: 13 // 지도의 확대 레벨
+	};
+	
+  // 지도를 표시할 div와  지도 옵션으로  지도를 생성합니다
+	map = new kakao.maps.Map($('#map')[0], mapOption); 
+	map.setDraggable(false);
+	map.setZoomable(false);
+	
+	$.get('../json/city.json', onGetCity);
+}
+
 
 function updateBg(icon) {
 	var bg;
@@ -109,5 +155,6 @@ function updateBg(icon) {
 			bg = '50n-bg.jpg';
 			break;
 	}
-	$('.wrapper').css('background-image','url(../img/'+bg+')');
+	$('.all-wrapper').css('background-image','url(../img/'+bg+')');
 }
+
