@@ -28,11 +28,11 @@ $('#bt').click(function(){
 /******** 전역설정 ********/
 var map;
 var cities;
+var cityCnt = 0;
 var weatherUrl = 'https://api.openweathermap.org/data/2.5/weather';
 var params = {
 	appid: '488c40db3b8e389e1bcf4a0f9a83f8fa',
 	units: 'metric',
-	exclude: 'minutely,hourly',
 	lang: 'kr'
 }
 
@@ -70,38 +70,73 @@ function onGetCity(r) {
 		params.lat = '';
 		params.lon = '';
 		params.id = cities[i].id;
-		$.get('weatherUrl', params, onCreateMarker);
+		$.get(weatherUrl, params, onCreateMarker);
 	}
 }
 
-function onCreateMarker(v) {
+function onCreateMarker(r) {
+	var city = cities.filter(function(v) {  //filter는 배열이 가지는 매서드
+		return v.id === r.id;  //city라는 새로운 배열에 조건에 맞는 값(v) 집어넣음(push)
+	});
+	/* 
 	for(var i in cities) {
 		if(cities[i].id === r.id) {
 			r.cityName = cities[i].name;
 			break;
 		}
 	}
-	cities.filter();  //filter는 배열이 가지는 매서드
-	for(var i in v) {
+	*/
+	cityCnt++;
+		console.log(city[0], r);
 		var content = '';
-		content += '<div class="popper '+v[i].class+'">';
+		content += '<div class="popper '+city[0].class+'">';
 		content += '<div class="img-wrap">';
-		content += '	<img src="http://openweathermap.org/img/wn/02d.png" class="mw-100">';
+		content += '	<img src="http://openweathermap.org/img/wn/'+r.weather[0].icon+'.png" class="mw-100">';
 		content += '</div>';
 		content += '<div class="cont-wrap">';
-		content += '	<div class="name">'+v[i].name+'</div>';
-		content += '	<div class="temp">-3.57도</div>';
+		content += '	<div class="name">'+city[0].name+'</div>';
+		content += '	<div class="temp">'+r.main.temp+'</div>';
 		content += '</div>';
 		content += '<i class="fa fa-caret-down"></i>';
 		content += '</div>';
-		var position = new kakao.maps.LatLng(v[i].lat, v[i].lon)
+		var position = new kakao.maps.LatLng(r.coord.lat, r.coord.lon)
 		var customOverlay = new kakao.maps.CustomOverlay({
 			position: position,
 			content: content
 		});
 		customOverlay.setMap(map);
+
+		content = '';
+		content += '<div class="city swiper-slide">';
+		content += '<div class="name">'+city[0].name+'</div>';
+		content += '<div class="content">';
+		content += '<div class="img-wrap">';
+		content += '<img src="http://openweathermap.org/img/wn/'+r.weather[0].icon+'.png" class="mw-100">';
+		content += '</div>';
+		content += '<div class="cont-wrap">';
+		content += '<div class="temp">온도&nbsp;&nbsp; '+r.main.temp+'도</div>';
+		content += '<div class="temp">체감&nbsp;&nbsp; '+r.main.feels_like+'도</div>';
+		content += '</div>';
+		content += '</div>';
+		content += '</div>';
+		$('.city-wrap .swiper-wrapper').append(content);
+		if(cityCnt == cities.length) {
+			//정보 다 받은 후에 들어온 순서대로 스와이퍼 만듦, 스와이퍼 여러번 실행되는 문제 해결
+			var swiper = new Swiper('.city-wrap .swiper-container', {
+				slidesPerView: 1,
+				spaceBetween: 10,
+				loop: true,
+				navigation: {
+					nextEl: '.city-wrap .bt-next',
+					prevEl: '.city-wrap .bt-prev',
+				},
+				breakpoints: {
+					640: {slidesPerView: 2},
+					768: {slidesPerView: 4},
+				}
+			});
+		}
 	}
-}
 
 
 /******** 사용자 함수  ********/
@@ -113,8 +148,7 @@ function getWeather(lat, lon) {
 }
 
 function mapInit() {
-	var mapContainer = document.getElementById('#map'), // 지도를 표시할 div 
-	mapOption = { 
+	var mapOption = { 
 		center: new kakao.maps.LatLng(35.8, 127.7), // 지도의 중심좌표
 		level: 13, // 지도의 확대 레벨
 		draggable: false,
