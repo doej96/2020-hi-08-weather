@@ -23,7 +23,7 @@ html, body {font-family: 'Noto Sans KR', sans-serif; line-height: 1;}
 .cont-wrapper > .map-wrap {flex: 400px 0 0; height: 600px; border-radius: 8px;}
 .cont-wrapper > .weather-wrap {flex: 100% 0 1; margin-left: 5%;}
 
-.cont-wrapper .popper {display: flex; align-items: center; position: absolute; background-color: rgba(0,0,0,0.85); color: #f9f9f9; border-radius: 4px; text-align: center; align-items: center; padding-right: 8px; font-weight: lighter; font-size: 0.75em; top: -48px;}
+.cont-wrapper .popper {display: flex; align-items: center; position: absolute; background-color: rgba(0,0,0,0.7); color: #f9f9f9; border-radius: 4px; text-align: center; align-items: center; padding-right: 8px; font-weight: lighter; font-size: 0.75em; top: -48px;}
 .cont-wrapper .popper.lt {left: 0;}
 .cont-wrapper .popper.ct {left: -30px;}
 .cont-wrapper .popper.rt {left: -60px;}
@@ -32,7 +32,7 @@ html, body {font-family: 'Noto Sans KR', sans-serif; line-height: 1;}
 .cont-wrapper .popper.rt > .fa {right: 6px;}
 .cont-wrapper .popper .img-wrap {width: 35px;}
 .cont-wrapper .popper .name {margin-bottom: 2px;}
-.cont-wrapper .popper .fa {color: rgba(0,0,0,0.85); position: absolute; bottom: -10px; font-size: 1.5em;}
+.cont-wrapper .popper .fa {color: rgba(0,0,0,0.7); position: absolute; bottom: -10px; font-size: 1.5em;}
 
 .cont-wrapper > .city-wrap {display: none; width: 100%; position: relative;}
 .cont-wrapper > .city-wrap .swiper-container {width: 100%;}
