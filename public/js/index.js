@@ -27,11 +27,13 @@ $('#bt').click(function(){
 
 /******** 전역설정 ********/
 var map;
+var cities;
 var weatherUrl = 'https://api.openweathermap.org/data/2.5/weather';
 var params = {
 	appid: '488c40db3b8e389e1bcf4a0f9a83f8fa',
 	units: 'metric',
-	exclude: 'minutely,hourly'
+	exclude: 'minutely,hourly',
+	lang: 'kr'
 }
 
 /******** 이벤트 등록 ********/
@@ -41,6 +43,10 @@ mapInit();
 
 
 /******** 이벤트 콜백 ********/
+function onResize() {
+	map.setCenter(new kakao.maps.LatLng(35.8, 127.7));
+}
+
 function onGetPosition(r) {
 	getWeather(r.coords.latitude, r.coords.longitude);
 }
@@ -57,13 +63,25 @@ function onGetWeather(r) {
 }
 
 function onGetCity(r) {
-	createMarker(r.cities);
+	// createMarker(r.cities);
 	// 변경할 사항은 위의 createMarker를 실행하지 않고 openweathermap 통신으로 날씨정보 받아오면 그 때 그 정보로 marker 만듦
+	cities = r.cities;
+	for(var i in cities) {
+		params.lat = '';
+		params.lon = '';
+		params.id = cities[i].id;
+		$.get('weatherUrl', params, onCreateMarker);
+	}
 }
 
-
-/******** 사용자 함수  ********/
-function createMarker(v) {
+function onCreateMarker(v) {
+	for(var i in cities) {
+		if(cities[i].id === r.id) {
+			r.cityName = cities[i].name;
+			break;
+		}
+	}
+	cities.filter();  //filter는 배열이 가지는 매서드
 	for(var i in v) {
 		var content = '';
 		content += '<div class="popper '+v[i].class+'">';
@@ -85,7 +103,10 @@ function createMarker(v) {
 	}
 }
 
+
+/******** 사용자 함수  ********/
 function getWeather(lat, lon) {
+	params.id = '';
 	params.lat = lat;  //params에 lat 집어넣음
 	params.lon = lon;
 	$.get(weatherUrl, params, onGetWeather);
@@ -105,6 +126,7 @@ function mapInit() {
 	map.setDraggable(false);
 	map.setZoomable(false);
 	
+	$(window).resize(onResize);
 	$.get('../json/city.json', onGetCity);
 }
 
