@@ -30,6 +30,7 @@ var map;
 var cities;
 var cityCnt = 0;
 var weatherUrl = 'https://api.openweathermap.org/data/2.5/weather';
+var onecallUrl = 'https://api.openweathermap.org/data/2.5/onecall';
 var params = {
 	appid: '488c40db3b8e389e1bcf4a0f9a83f8fa',
 	units: 'metric',
@@ -90,7 +91,7 @@ function onCreateMarker(r) {
 	cityCnt++;
 		console.log(city[0], r);
 		var content = '';
-		content += '<div class="popper '+city[0].class+'" onclick="">';
+		content += '<div class="popper '+city[0].class+'" onclick="getWeather('+city[0].id+')">';
 		content += '<div class="img-wrap">';
 		content += '	<img src="http://openweathermap.org/img/wn/'+r.weather[0].icon+'.png" class="mw-100">';
 		content += '</div>';
@@ -108,7 +109,7 @@ function onCreateMarker(r) {
 		customOverlay.setMap(map);
 
 		content = '';
-		content += '<div class="city swiper-slide">';
+		content += '<div class="city swiper-slide" onclick="getWeather('+city[0].id+')">';
 		content += '<div class="name">'+city[0].name+'</div>';
 		content += '<div class="content">';
 		content += '<div class="img-wrap">';
@@ -159,11 +160,22 @@ function updateDaily(r) {
 	$infoWrap.find('.date .title').html(moment(r.dt*1000/*자바스크립트는 밀리초임*/).format('YYYY년 M월 D일 HH시 mm분')+' 기준');
 }
 
-function getWeather(lat, lon) {
-	params.id = '';
-	params.lat = lat;  //params에 lat 집어넣음
-	params.lon = lon;
+function getWeather(param, param2) {
+	params.exclude = '';
+	if(param && param2) {
+		params.id = '';
+	  params.lat = param;  //params에 param(위도,경도) 집어넣음
+	  params.lon = param2;
+	}
+	else {
+		params.id = param;
+	  params.lat = '';
+	  params.lon = '';
+	}
 	$.get(weatherUrl, params, onGetWeather);
+
+	params.exclude='minutely'
+	$.get(onecallUrl, params, onGetWeekly);
 }
 
 function mapInit() {
