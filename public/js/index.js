@@ -59,6 +59,7 @@ function onGetPositionError() {
 function onGetWeather(r) {
 	console.log(r);
 	console.log(r.weather[0].icon);
+	updateWeather();
 	updateBg(r.weather[0].icon);
 }
 
@@ -140,6 +141,10 @@ function onCreateMarker(r) {
 
 
 /******** 사용자 함수  ********/
+function updateWeather(r) {
+	
+}
+
 function getWeather(lat, lon) {
 	params.id = '';
 	params.lat = lat;  //params에 lat 집어넣음
@@ -152,7 +157,8 @@ function mapInit() {
 		center: new kakao.maps.LatLng(35.8, 127.7), // 지도의 중심좌표
 		level: 13, // 지도의 확대 레벨
 		draggable: false,
-		zoomable: false
+		zoomable: false,
+		disableDoubleClick: true
 	};
 	
   // 지도를 표시할 div와  지도 옵션으로  지도를 생성합니다
