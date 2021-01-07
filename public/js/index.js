@@ -59,7 +59,7 @@ function onGetPositionError() {
 function onGetWeather(r) {
 	console.log(r);
 	console.log(r.weather[0].icon);
-	updateWeather();
+	updateDaily(r);
 	updateBg(r.weather[0].icon);
 }
 
@@ -90,7 +90,7 @@ function onCreateMarker(r) {
 	cityCnt++;
 		console.log(city[0], r);
 		var content = '';
-		content += '<div class="popper '+city[0].class+'">';
+		content += '<div class="popper '+city[0].class+'" onclick="">';
 		content += '<div class="img-wrap">';
 		content += '	<img src="http://openweathermap.org/img/wn/'+r.weather[0].icon+'.png" class="mw-100">';
 		content += '</div>';
@@ -124,7 +124,7 @@ function onCreateMarker(r) {
 		if(cityCnt == cities.length) {
 			//정보 다 받은 후에 들어온 순서대로 스와이퍼 만듦, 스와이퍼 여러번 실행되는 문제 해결
 			var swiper = new Swiper('.city-wrap .swiper-container', {
-				slidesPerView: 1,
+				slidesPerView: 2,
 				spaceBetween: 10,
 				loop: true,
 				navigation: {
@@ -132,7 +132,7 @@ function onCreateMarker(r) {
 					prevEl: '.city-wrap .bt-prev',
 				},
 				breakpoints: {
-					640: {slidesPerView: 2},
+					576: {slidesPerView: 3},
 					768: {slidesPerView: 4},
 				}
 			});
@@ -141,8 +141,22 @@ function onCreateMarker(r) {
 
 
 /******** 사용자 함수  ********/
-function updateWeather(r) {
-	
+function updateDaily(r) {
+	var $city = $('.daily-container .city');
+	var $imgWrap = $('.daily-container .img-wrap');
+	var $tempWrap = $('.daily-container .temp-wrap');
+	var $infoWrap = $('.daily-container .info-wrap');
+	var src = 'http://openweathermap.org/img/wn/'+r.weather[0].icon+'@2x.png'
+	$city.html(r.name + ', ' + r.sys.country);
+	$("img", $imgWrap).attr('src', src); // $imgWrap.find('img').attr('src', src);
+	$tempWrap.find('h3').html(r.main.temp+'˚');
+	$tempWrap.find('div').html('(체감 '+r.main.feels_like+'˚)');
+	$infoWrap.find('h3').html(r.weather[0].main+' <small>('+r.weather[0].description+')</small>');
+	$infoWrap.find('.temp .info').eq(0).html(r.main.temp_max+'˚');
+	$infoWrap.find('.temp .info').eq(1).html(r.main.temp_min+'˚');
+	$infoWrap.find('.wind .arrow').css('transform', 'rotate('+r.wind.deg+'deg)');
+	$infoWrap.find('.wind .info').html(r.wind.speed+' ㎧');
+	$infoWrap.find('.date .title').html(moment(r.dt*1000/*자바스크립트는 밀리초임*/).format('YYYY년 M월 D일 HH시 mm분')+' 기준');
 }
 
 function getWeather(lat, lon) {
