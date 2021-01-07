@@ -34,7 +34,8 @@ var onecallUrl = 'https://api.openweathermap.org/data/2.5/onecall';
 var params = {
 	appid: '488c40db3b8e389e1bcf4a0f9a83f8fa',
 	units: 'metric',
-	lang: 'kr'
+	lang: 'kr',
+	exclude: 'minutely,current'
 }
 
 /******** 이벤트 등록 ********/
@@ -140,6 +141,10 @@ function onCreateMarker(r) {
 		}
 	}
 
+	function onGetWeekly(r) {
+		console.log(r);
+	}
+
 
 /******** 사용자 함수  ********/
 function updateDaily(r) {
@@ -173,9 +178,7 @@ function getWeather(param, param2) {
 	  params.lon = '';
 	}
 	$.get(weatherUrl, params, onGetWeather);
-
-	params.exclude='minutely'
-	$.get(onecallUrl, params, onGetWeekly);
+	$.get(weatherUrl, params, onGetWeekly);
 }
 
 function mapInit() {
