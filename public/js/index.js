@@ -20,7 +20,7 @@ $('#bt').click(function(){
 // opneweathermap: 488c40db3b8e389e1bcf4a0f9a83f8fa
 // kakao: 8f8ecf68fb72a64ab9800fd79fb08d2a
 
-// 7days: https://api.openweathermap.org/data/2.5/onecall?lat=38&lon=127&appid=488c40db3b8e389e1bcf4a0f9a83f8fa&units=metric&exclude=minutely,hourly
+// 7days: https://api.openweathermap.org/data/2.5/onecall?lat=38&lon=127&appid=488c40db3b8e389e1bcf4a0f9a83f8fa&units=metric&exclude=minutely,hourly,current
 
 //icon: http://openweathermap.org/img/wn/10d@2x.png
 
@@ -125,13 +125,13 @@ function onCreateMarker(r) {
 		$('.city-wrap .swiper-wrapper').append(content);
 		if(cityCnt == cities.length) {
 			//정보 다 받은 후에 들어온 순서대로 스와이퍼 만듦, 스와이퍼 여러번 실행되는 문제 해결
-			var swiper = new Swiper('.city-wrap .swiper-container', {
+			var swiper = new Swiper('.city-wrap > .swiper-container', {
 				slidesPerView: 2,
 				spaceBetween: 10,
 				loop: true,
 				navigation: {
-					nextEl: '.city-wrap .bt-next',
-					prevEl: '.city-wrap .bt-prev',
+					nextEl: '.city-wrap > .bt-next',
+					prevEl: '.city-wrap > .bt-prev',
 				},
 				breakpoints: {
 					576: {slidesPerView: 3},
@@ -143,10 +143,36 @@ function onCreateMarker(r) {
 
 	function onGetWeekly(r) {
 		console.log(r);
+		var html;
+		for(var i in r.hourly) {
+		html = '<div class="swiper-slide">';
+        html += '<div class="time-wrap">'+moment(r.hourly[i].dt*1000).format('H'+'시')+'</div>';
+        html += '<div class="img-wrap">';
+        html += '<img src="http://openweathermap.org/img/wn/'+r.hourly[i].weather[0].icon+'.png" class="mw-100">';
+        html += '</div>';
+        html += '<div class="temp-wrap">';
+        html += '<div class="temp">'+r.hourly[i].temp+'도</div>';
+		html += '</div>';
+		$('.hourly-container .swiper-wrapper').append(html);
+		}
+		var swiper = new Swiper('.hourly-container > .swiper-container', {
+			slidesPerView: 3,
+			spaceBetween: 10,
+			loop: true,
+			navigation: {
+				nextEl: '.hourly-container > .bt-next',
+				prevEl: '.hourly-container > .bt-prev',
+			},
+			breakpoints: {
+				576: {slidesPerView: 4},
+				768: {slidesPerView: 6},
+			}
+		});
 	}
 
 
 /******** 사용자 함수  ********/
+
 function updateDaily(r) {
 	var $city = $('.daily-container .city');
 	var $imgWrap = $('.daily-container .img-wrap');
@@ -178,7 +204,7 @@ function getWeather(param, param2) {
 	  params.lon = '';
 	}
 	$.get(weatherUrl, params, onGetWeather);
-	$.get(weatherUrl, params, onGetWeekly);
+	$.get(onecallUrl, params, onGetWeekly);
 }
 
 function mapInit() {
