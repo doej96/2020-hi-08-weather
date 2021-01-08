@@ -60,6 +60,11 @@ html, body {font-family: 'Noto Sans KR', sans-serif; line-height: 1;}
 .hourly-container {width: 100%; position: relative; padding: 0 3%; margin-top: 1em; text-align: center; color: #2d2d2d;}
 .hourly-container .slide-wrapper {display: flex;}
 
+.weekly-container {margin-top: 2em; border: 1px solid rgba(255,255,255,0.3); color: #2d2d2d; padding: 1em;}
+.weekly-container .swiper-slide {display: flex; align-items: center;}
+.weekly-container .swiper-slide .icon {margin: 0 auto;}
+.weekly-container .swiper-slide > div:not(.icon) {padding: 0 1em;}
+
 
 @media screen and (max-width: 1199px) {}
 @media screen and (max-width: 991px) {
