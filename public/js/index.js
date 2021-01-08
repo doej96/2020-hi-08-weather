@@ -39,6 +39,7 @@ var params = {
 }
 
 /******** 이벤트 등록 ********/
+moment.locale('ko');
 navigator.geolocation.getCurrentPosition(onGetPosition, onGetPositionError);
 mapInit();
 
@@ -92,7 +93,7 @@ function onCreateMarker(r) {
 	cityCnt++;
 		console.log(city[0], r);
 		var content = '';
-		content += '<div class="popper '+city[0].class+'" onclick="getWeather('+city[0].id+')">';
+		content += '<div class="popper '+city[0].class+'" onclick="getWeather('+city[0].lat+', '+city[0].lon+')">';
 		content += '<div class="img-wrap">';
 		content += '	<img src="http://openweathermap.org/img/wn/'+r.weather[0].icon+'.png" class="mw-100">';
 		content += '</div>';
@@ -141,12 +142,21 @@ function onCreateMarker(r) {
 		}
 	}
 
+	// format(	 'YYYY-MM-DD hh:mm:ss '		) 01시
+	// format(	 'YYYY-MM-DD HH:mm:ss '		) 13시
+	// (i == 0) ? '지금' : moment(r.hourly[i].dt*1000).format('H')+'시('+moment(r.hourly[i].dt*1000).format('D')+'일)'
+
 	function onGetWeekly(r) {
 		console.log(r);
+		$('.hourly-container .swiper-wrapper').empty();
+		$('.weekly-container').empty();
+
 		var html;
+
+		// Hourly
 		for(var i in r.hourly) {
 		html = '<div class="swiper-slide">';
-        html += '<div class="time-wrap">'+moment(r.hourly[i].dt*1000).format('H'+'시')+'</div>';
+        html += '<div class="time-wrap">'+((i == 0) ? '현재' : moment(r.hourly[i].dt*1000).format('H')+'시('+moment(r.hourly[i].dt*1000).format('D')+'일)')+'</div>';
         html += '<div class="img-wrap">';
         html += '<img src="http://openweathermap.org/img/wn/'+r.hourly[i].weather[0].icon+'.png" class="mw-100">';
         html += '</div>';
@@ -158,7 +168,6 @@ function onCreateMarker(r) {
 		var swiper = new Swiper('.hourly-container > .swiper-container', {
 			slidesPerView: 3,
 			spaceBetween: 10,
-			loop: true,
 			navigation: {
 				nextEl: '.hourly-container > .bt-next',
 				prevEl: '.hourly-container > .bt-prev',
@@ -171,10 +180,17 @@ function onCreateMarker(r) {
 			}
 		});
 
-		var swiper = new Swiper('.weekly-container.swiper-container', {
-			slidesPerView: 2,
-			direction: 'vertical',
-		});
+		// Weekly
+		for(var i=1; i<r.daily.length; i++) {
+			html  = '<div class="">';
+			html += '	<div class="yoil">'+moment(r.daily[i].dt*1000).format('dddd')+'</div>';
+			html += '	<div class="icon"><img src="http://openweathermap.org/img/wn/'+r.daily[i].weather[0].icon+'.png" alt="icon" class="mw-100"></div>';
+			html += '	<div class="desc">'+r.daily[i].weather[0].main+'('+r.daily[i].weather[0].description+')</div>';
+			html += '	<div class="max">'+r.daily[i].temp.max+'˚</div>';
+			html += '	<div class="min">'+r.daily[i].temp.min+'˚</div>';
+			html += '</div>';
+			$('.weekly-container').append(html);
+		}
 	}
 
 
@@ -224,9 +240,10 @@ function mapInit() {
 	};
 	
   // 지도를 표시할 div와  지도 옵션으로  지도를 생성합니다
-	map = new kakao.maps.Map($('#map')[0], mapOption); 
-	map.setDraggable(false);
-	map.setZoomable(false);
+	map = new kakao.maps.Map($('#map')[0], mapOption);
+	map.addOverlayMapTypeId(kakao.maps.MapTypeId.TERRAIN);
+	// map.setDraggable(false);
+	// map.setZoomable(false);
 	
 	$(window).resize(onResize);
 	$.get('../json/city.json', onGetCity);
@@ -237,18 +254,18 @@ function updateBg(icon) {
 	var bg;
 	switch(icon) {
 		case '01d':
-		case '02d':
 			bg = '01d-bg.jpg';
 			break;
 		case '01n':
-		case '02n':
 			bg = '01n-bg.jpg';
 			break;
 
+		case '02d':
 		case '03d':
 		case '04d':
 			bg = '03d-bg.jpg';
 			break;
+		case '02n':
 		case '03n':
 		case '04n':
 			bg = '03n-bg.jpg';
